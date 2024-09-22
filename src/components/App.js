@@ -1,42 +1,33 @@
-import React, { Component, useState } from "react";
-import '../styles/App.css';
-
-class App extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            renderBall: false,
-            posi : 0,
-            ballPosition: { left: "0px" }
-        };
-        this.renderChoice = this.renderBallOrButton.bind(this)
-        this.buttonClickHandler = this.buttonClickHandler.bind(this)
+import React, { useEffect, useState } from 'react'
+import '../styles/App.css'
+export default function App() {
+  const[show,setShow]=useState(false)
+  const [position, setPosition] = useState(0);
+  function buttonClickHandler(){
+    setShow(!show)
+  }
+  useEffect(()=>{
+    const handleKeyDown = (event) => {
+      if (event.key === 'ArrowRight' || event.keyCode === 39) {
+        setPosition((prevPosition) => prevPosition + 5);
+      }
     };
-
-    buttonClickHandler() {
-   
-   }
-    renderBallOrButton() {
-		if (this.state.renderBall) {
-		    return <div className="ball" style={this.state.ballPosition}></div>
-		} else {
-		    return <button onClick={this.buttonClickHandler} >Start</button>
-		}
+    if(show){
+      window.addEventListener('keydown', handleKeyDown);
     }
-
-    // bind ArrowRight keydown event
-    componentDidMount() {
-      
-    }
-
-    render() {
-        return (
-            <div className="playground">
-                {this.renderBallOrButton()}
-            </div>
-        )
-    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  },[show])
+  
+  return (
+    <div>
+        {!show && <div className="start" onClick={buttonClickHandler}><button>start</button></div>}
+        {show && <div className='ball' style={{
+            position: 'absolute',
+            left: `${position}px`,
+            top: '100px', // You can adjust the initial vertical position if needed
+          }}></div>}
+    </div>
+  )
 }
-
-
-export default App;
